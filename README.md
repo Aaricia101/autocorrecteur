@@ -1,390 +1,76 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 11,
-   "id": "5b6bfb91",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "#au besoin\n",
-    "\n",
-    "#%pip install textdistance\n",
-    "#%pip install pandas"
-   ]
-  },
-  {
-   "attachments": {
-    "079030c2-4f9f-4fca-a912-215733ca8992.png": {
-     "image/png": "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"
-    },
-    "30bb071a-f817-430f-a7d7-c1ae930d2ef7.png": {
-     "image/png": "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"
-    },
-    "b32679c2-5958-4ad8-a414-8fbe45554772.png": {
-     "image/png": "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"
-    },
-    "e0ec457e-f248-4145-86d9-28bafd2de0e9.png": {
-     "image/png": "iVBORw0KGgoAAAANSUhEUgAAAUEAAADSCAYAAADUi3JoAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABJXSURBVHhe7d0/SF/X/8fx09+mS6ERLARCkiVuleAQSbI4NC5CqWAIxq6KDiFQxzjoqBASUHSthpKAnXVIFhN0kGCXxiwqguBgAl3M2F9ep/dY88k1Dd/mHu857+cDLp/P53yk33ty733d8+d+vuerv/7m5KuvvvKvAGDF/xWvAGASIQjANN8dLt4DgDm0BAGYRkswI0xsAf+uMfIIwYwoBHM7nLnUiXrUQ9n+0x0GYBohCMA0QhCAaYQgANMIQQCmEYIATCMEAZhGCAIwjRAEYBohiH/14sUL/6R92TYxMVH8VVpev37t2tvbP6jLo0ePim/r7c2bN667u/uT//b6Tn+jv01BOB6nsc+EID7LjRs33MHBgf/JUdj0WQGZSngE2t+2tjY3PT19VJfDw0O3srLihoaG3Lt374q/rKczZ864gYEB/29fFhgq03f6G/1tCtbX111ra6vb3993S0tLRWkchCD+Z+FiVHjUPTgCtTh++eUXt7m56a5evVqUOtfU1OTu37/v309NTfnXOuvo6DgxMFQ3fae/SYHOHZ1DP/30k+vt7Y1+PhGCMOXJkyfu2rVr7tKlS0XJPxSEn2ph1Yn2vyww9H5+ft5/V1bHOnr58qVbW1vzod3V1eXf7+7uFt9WjxDE/0ytqsnJSXf9+nUfIHWngNjb23MXL14sSj6mbrKoNVV3ZYGh9yrTd6l49uyZu3Llijt37py7fPmyf6/ucSyEID7L8vKya2lp+WAiQYExOjrq+vv7i79Kw/nz54t3aQuBodZtoPBQmb5LwfHxS91ItemmqtZsrNY4IYjPUjYxoi21AJSdnZ3iXdpCYITuexhbS6VlLqHFHVrgEsY7Y7XGCUGYoWA4e/as29raKko+VnZR1pkeKRHtt8bWFPChrO7C+GVjL0P/9r///rvvJsdACMKUvr4+9/z5cz+e2ShclJo1TuXREu2n9leBoS2lfQ/jlzoejT2MhYUFt7i4WHqcvjRCEKZoxlSPYqi1oW5koAC8e/euf//zzz/711Qo2BUYY2NjSU2IfGr8MjzeE2OChBCEORrH1PimflURumDNzc1+LG12djaZ8bRAs6oKk8HBwaQmRNTqPmn88qRHgKrAQksZ0cWc2+HMpU7Uox7K9p+WIADTCEEAphGCAEwjBAGYRggCMI0QBGAaIQjANEIQgGmEIADT+MVIRvQ0PIBPa4w8QhCAaXSHAZhGCAIwjRAEYBohCMA0QhCAaYQgANPMPyLDs3WALTwn2CCX/9tzyakuQS514jyrh7J9pzsMwDRCEIBphCAA0whBAKYRggBMIwQBmEYIAjCNEARgGiEIwDRCEIBphGCFXr9+7drb2/1PdbQ9evSo+CZtb968cbdu3fL1S5Xq0N3dfXRs9F5lKWo8z168eFF8kyZdJ0NDQ+7du3dFSbUIwYrogrpz544bHR31v1Xc3Nx0k5OTyZ+gqld/f7979epVUZKeUIeBgQF/bLTpvcpSC0IF4M2bN9309PTReTY+Pp7sDUr7reskJkKwIktLS+78+fPuxx9/9J8vXbrkA3F+fj7aHe5LU4C3tLT4i621tbUoTY+CQtT6C8L78F0q1tfXXW9vr7t69ar/rPPs2rVrvjw1ui7u37/v2traipI4CMGKbG1tubNnz7qmpqaixLmOjg73559/usPDw6IkHTpBFeDPnz93Dx8+LErTpMDQTerMmTNFSbrUer13717x6R86/1IzNTXlr5menp6iJA5CsAIKjL29PXfx4sWi5B9v3751BwcHxad0KMxnZ2ePWhy5UQtwf3/ft3RTptb64uKi6+vrK0rSoP3WNjw8XJTEQwjCPI1DjYyM+OEKdSdTFCZH1BVW9zilemgcdmJiwrdoT6N1TgjCtDCxoOBQ1zJVCr2NjQ0/XisxZ1f/q5mZGd/DOK1eBiFYAXUdNbZRNi7zzTffJN/lysXxACwbV0uVusLb29tud3e3KKkvtQLVDR4bGzt6xOf27dtubm7OdXZ2+mNUNUKwIhoP1Ljg8buxZuy+/vpr19zcXJTgtIQAVBc45QBUN1JbqtT91SRVeFRJ28LCghscHHSrq6tRuvWEYEX0yMXOzo777bff/GdddHr+Sc+jHZ8xRnxqfYRnOFPuAktXV5dvRak1JeExE40Npjq+GRshWBHd4R48eOCDT018Pfukiy7X2dWUqOWxvLzsu12hCxa21H7Vo/NJjy0p9LT/6mVoKCan7n3VWG3u/YmTyz9BTnUJcqkT51k9lO07LUEAphGCAEwjBAGYRggCMI0QBGAaIQjANEIQgGmEIADTPnpYWg8T5uikhztzrS+Aco1ZUBqCJwVGqj5Vp5zqa+3YpYTzrB7K9p3uMADTCEEAphGCAEwjBAGYRggCMI0QBGAaIQjANEIQgGmEIADTooagVsTSKmxa7csS1ffWrVtR1lCNIYf6qA46F/ULAm0pn5c6Du3t7Ud1CSvPpUqLXcVcPJ6WYMV0YWlZx1evXhUlacuhPqEOWv5UP6HSpvcqSy0Iw/rJ09PTvh6bm5tufHw82RuU9lsrNMZECFZId+SWlhZ/cra2thal6cqlPgoKUesvCO/Dd6nQgv69vb1HS7lqrWEtv6ny1IQ1k7U8bUyEYEV0QOfn5/2asA8fPixK05VTfRQYWntYa0OnTq3XsjWGt7a2infpmJqa8msm9/T0FCVxEIIVaWpqcrOzs9kstp5bfRqpBbi/v+9builTa31xcdH19fUVJWnQfmsbHh4uSuIhBGGexqFGRkbc6Oio706mKEyOqCus7nFK9dA47MTEhG/RnkbrnBCEaWFiQcGhrmWqFHobGxt+vFZizq7+VzMzM76HcVq9DEIQZh0PwLJxtVSpK7y9ve12d3eLkvpSK1Dd4LGxsaNHfG7fvu3m5uZcZ2enP0ZVIwRhUghAdYFTDkB1I7WlSt1fTVKpBRu2hYUFNzg46FZXV6N06wlBmKPWx507d3wAptwFlq6uLt+KUmtKwmMmGhtMdXwztughuLy87GfgQtM3bOEgAlVTy0Pnobpdjeehfq2QEo2j6bElhZ72v7m52T9mklP3vmostJRRfa0du5RwntVD2b7THQZgGiEIwDRCEIBphCAA0whBAKYRggBMIwQBmEYIAjCNEARgWukvRnJ00hPuudYXQLnGLOBncxnV19qxSwnnWT2U7TvdYQCmEYIATCMEAZhGCAIwjRAEYBohCMA0QhCAaYQgANMIQQCmRQ9BrZGqp7bD1t3d7ZdAzJFWLjte19RWMmuUW30C1SPltXu1hnJ7e/vRcUl95UYdj6GhIb98aAzRQlBBp8Db29tzh4eH/qcr2rQ0oJbgzG3JTR3I+fl5d3Bw4OupV31ONThyq0+g/dfSm6kKi8hPT0/747K5uenGx8d9eYq035OTk8WnOKKF4MzMjF8jdXZ21jU1NRWl/6ybOjIykuyBa6Q72MrKihsYGPAr7Ite9Vnlse5wX0pu9RHts1obuuC+//77ojQ96+vrrre3119HogXXtQaxylOjY6KF49va2oqSOKKEoMJNQdfX11eUfOjy5cvuypUrSR64Mgp5hX1/f39Rkrbc6iMvX770r6urqz40UqVjUrbQ+tbWVvEuHVNTU37h+J6enqIkjighqK6TxirU7S2ji+z69evJtio+R2hN6SAfbwmnKvX6lPVKcqBhpcXFxRMbHHWl/dY2PDxclMQTrTt8/vx519zcXHyyR3e5nZ2dUznIVcitPqlTb0uTI2rVqnusbnEqNF+giSm1aMNwS0zRQlAXjCZELNIB1t35wYMHp3KQv7Tc6pMDhd7GxoafHJGYs6v/VZgvCOOasUUJQXWDw4ximdC1Upc4t+5JCIzHjx8ndXc+SW71yZG6wtvb2253d7coqS+1AtUNHhsbO3rER7P1c3NzrrOzM8pkaZQQDDNWT548KUo+pEHqtbU119HRUZTkQYGhA/z06dNsAjCn+uRAx0RbqtSTWFpa8o2ksC0sLLjBwUE/aRXjPIvWHdbYkS6gxma6yhSQes4ppwtLz5+pbnrNocuYW31y0dXV5VtROjaia0uPmeia4kb1eaKFYEh8dXk1QRKavrqLqZt8WuMBVVATXw8SLy8v+6GAUFdtKf5CJrf65ETXjR4/U+jpeOja0ox92WMzKMdCSxnV19qxSwnnWT2U7Xu0liAA1BEhCMA0QhCAaYQgANMIQQCmEYIATCMEAZhGCAIwjRAEYFrpL0ZydNIT7rnWF0C5xizgZ3MZ1dfasUsJ51k9lO073WEAphGCAEwjBAGYRggCMI0QBGAaIQjANEIQgGmEIADTCEEApkUJQS3T2N7efuJCyirX9/q7nIR66Sl1bWFZxFTlVB+tkKeV8kJdclg1T/t/69atKAuWV0k50Lg0b5WihKBOsG+//datr68XJR9Sub7X3+VCJ+LNmzf9esr6mc7m5qYbHx9P9gTNqT4Ki/7+fjcwMODrok3vVZZqEIY6vXr1qihJk86nycnJ4lMcUUJQaw5rfVStXdt4kintV1ZW/Pc5LeqtYO/t7T1aT1kLYWtt2JNuBHWXU30U4HL8phveh+9Soha51oNWmLe2thal6QkLx7e1tRUlcUQbE+zr63P7+/sfnWQvX750a2tr/vuc6K5ctgD21tZW8S4tOdVHQb60tJTFTVfBocaFFmB/+PBhUZqmqakpv3B8T09PURJHtBA8d+6cu3Llinv27FlR8jd9Vrm+z5nu1ouLi9mEfW710c1ZN2m1qFLS1NTkZmdnj1roqdL5pG14eLgoiSdaCOpgadxFF04YR1LXWBVXub7PkeqqyQR1HdWdVDcyZbnVR1SnkZERNzo6mkV9UqMcmJiY8D2N02idRwtBUV//+ARJ6BrHHgOISRfVxsaGH6+RmLNeVcitPgpATfgo0NXlR3wzMzO+JXtardmoIaiUV6tPEyFKf41l6HNOEyKfoq7j9va2293dLUrSlnp9jgdg2Xgnqhd6g2NjY0ePK92+fdvNzc25zs5Of4yqFjUEpaOjw184GsjVqz7nSM17bbnIrT4hANUFJgBPjxpAmqQKjyppW1hYcIODg251dTXK8ET0EFSlNJ70ww8/uAsXLmQ7IdLV1eXvbrrLSZj+V91THHfKqT5qfdy5c8cHIF1gRA9B0QUlOU+IaHxDrV2FhJr4zc3Nfvo/1VZHTvVRy2N5edl3u0IXLGy5/WoJ/46FljKqr7VjlxLOs3oo2/dTaQkCQF0QggBMIwQBmEYIAjCNEARgGiEIwDRCEIBphCAA00ofls7RSQ938hBrveVSJ86zeijbd34x8v47AHYQgg1yqq+1Y5cSzrN6KNt3xgQBmEYIAjCNEARgGiEIwDRCEIBphCAA0whBAKYRggBMIwQBmBYtBLVUo57WPmnLfZUv1W9oaMgvVZmDHOqjdZTD+ZdyXXQsUr+WTrMOUVuCN27ccAcHB/5nK41bzuu/aqHvycnJ4lP6cqiPAnBvb88dHh7680/Lh05NTRXfpkNhMT8/f3Rd6VWfUwrC064D3eGKhUXK29raipK05VAfLb7+xx9/uLt37x6te93X1+fL9F0qdCxWVlb8+t1nzpzxZXrVZ5Wn0LKtQx0IwYqpdaFWRk9PT1GSthzqo4vs119/dZcuXSpK/vb27VvfCkmFAnx2djbpXlQd6kAIVkjjoNqGh4eLkrTlVp8gtG6vXbv2UTCmJrSsdKMKrdzUxK5D1BBcXl52LS0tHwyAauvu7k6qG/I5VB+NO927d++omZ+y3OoTqE7Nzc1ubW3Nd4lTp5b6zs5O0jeq2HWoxcTI0tJSVheWzMzMuKtXr/otB7nVJ1Co6xx8/Pixu3nzpm/ppkqBvri46B48eJDs9XQqdXh/AnygpOiLeP78+V/vQ/Cv9yFYlMTzqTpVUV/VUXXVf7tx++677/7a3Nws/vLL0n+/CqdVH9H/Rizj4+N+q0LV9dB+V30sgqrqEqMOZfvOmGAFdAdT6/b9v+/RtrCw4AYHB93q6mpy40651UeP+KhXotccqPWkFuzTp0+THdM8zToQgjDn3Llz7sKFC34yJDyCoQtQ3bDUxgX1LJ32Xa+pdoFPuw61mBjRpjsBEINmHBWAokkRnX8jIyN+XDCllpQmq/RQcdl1lcpkYx3qwEJLGdXX2rFLCedZPZTtO91hAKYRggBMIwQBmEYIAjCNEARgGiEIwDRCEIBphCAA00ofls7RSQ938hBrveVSJ86zeijb949C0Br9owCwgxAEgGMYEwRgGiEIwDRCEIBhzv0/0hUcd8YhqZIAAAAASUVORK5CYII="
-    }
-   },
-   "cell_type": "markdown",
-   "id": "a231c046-77b0-424f-81bd-390b00dc27a2",
-   "metadata": {},
-   "source": [
-    "# Introduction au projet d'autocorrecteur\n",
-    "\n",
-    "Le but de ce projet est simple. Nous allons créer un autocorrecteur qui va corriger les **fautes d'ortographe**, les **fautes de pluralités** et les **fautes de conjugaison** pour des textes en anglais. Le programme va avoir un système de rétroaction où l'utilisateur va pouvoir informer l'AI à propos des corrections proposés afin de savoir si elles sont bonnes ou mauvaises. De plus, si un mot n'est pas dans le dictionnaire, mais qu'il est réutiliser à plusieurs reprises, le programme doit être en mesure de s'adapter et d'accepter ce mot. Ainsi, le programme apprendra les habitudes grammaticales de l'utilisateur et de s'adapter à son écriture.\n",
-    "\n",
-    "## Faute d'ortographe\n",
-    "\n",
-    "Pour commencer, je vais me charger de trouver un algorithme qui va me permettre de trouver un ortographe erroné et de suggérer des corrections possibles. Je vais utiliser **(1) l'algorithme de distance de Levenshtein**, **(2) la similarité de Jaccard** et un **(3) algorithme de probabilité**.\n",
-    "\n",
-    "### (1) L'algorithme de distance de Levenshtein\n",
-    "\n",
-    "Pour cet algorithme, l'idée est de trouver le plus petit nombre de modification qu'il faut faire afin que le premier mot soi équivalant au deuxième mot. \n",
-    "\n",
-    "Il y a trois(3) modifications possibles:\n",
-    "\n",
-    "1. Remplacer\n",
-    "2. Ajouter\n",
-    "3. Supprimer\n",
-    "\n",
-    "Exemple 1 : Textse => Texte, c’est une modification (suppression de «s»)​\n",
-    "\n",
-    "\n",
-    "Exemple 2 : Gumbo => Gambol, c’est deux modifications («u» pour «a» et ajout de «l»)\n",
-    "\n",
-    "\n",
-    "Exemple 3 : Mamger => Manger, c’est une modification (remplace «m» par «n»)\n",
-    "\n",
-    "Pour expliquer le code ci-dessous, je vais utiliser les mots « love » et « pova » comme exemple.\n",
-    "\n",
-    "1) À la premier étape, il faut créer une matrice et l'initialiser à 0. Le mot « love » contient 4 lettres et « pova » contient 4 lettres donc nous aurons une matrice de 5x5 (la première case restera 0).\n",
-    "   \n",
-    "    ![image.png](attachment:30bb071a-f817-430f-a7d7-c1ae930d2ef7.png)\n",
-    "   \n",
-    "\n",
-    "2) Maintenant, il faut remplir la première colonne et la première rangée avec des chiffres partant de 0 jusqu'à la taille complète du mot. (Les lettres ne font pas partie de la matrice. Ils sont présents seulement pour l'explication.)\n",
-    "\n",
-    "    ![image.png](attachment:b32679c2-5958-4ad8-a414-8fbe45554772.png)\n",
-    "\n",
-    "3) Ici, nous allons commencer à comparer les lettres. Voici les étapes:\n",
-    "     1. Si Mot[i] == Mot2[j], alors le coût est de 0\n",
-    "     2. Si Mot[i] != Mot2[j], alors le coût est de 1\n",
-    "  \n",
-    "     3. Entre les trois choix suivants, il faut trouver le plus petit nombre:\n",
-    "        - Matrix[i, j-1] + 1\n",
-    "        - Matrix[i-1, j] + 1\n",
-    "        - Matrix[i-1, j-1] + coût\n",
-    "\n",
-    "        Ce nombre va être entreposé dans Matrix[i, j]\n",
-    "     \n",
-    "   \n",
-    "   Pour la première colonne, on va comparer les lettres du mots « LOVE » à la première lettre du mot « POVA ». Voici le résultat :\n",
-    "\n",
-    "   ![image.png](attachment:079030c2-4f9f-4fca-a912-215733ca8992.png)\n",
-    "\n",
-    "   En premier lieu, on a « L » comparé à « P ». Ces deux lettres sont différents donc le coût == 1.\n",
-    "   - Matrix[i, j-1] + 1 = 2\n",
-    "   - Matrix[i-1, j] + 1 = 2\n",
-    "   - Matrix[i-1, j-1] + coût = 1\n",
-    "\n",
-    "  \n",
-    "   D'où Matrix[1, 1] = 1\n",
-    "\n",
-    "\n",
-    "   En deuxième lieu, on a « O » comparé à « P ». Le coût est 1.\n",
-    "   - Matrix[i, j-1] + 1 = 2\n",
-    "   - Matrix[i-1, j] + 1 = 3\n",
-    "   - Matrix[i-1, j-1] + coût = 1\n",
-    "\n",
-    "  \n",
-    "   D'où Matrix[1, 2] = 2\n",
-    "\n",
-    "   Il suffit de refaire les mêmes étapes jusqu'à la fin.\n",
-    "\n",
-    "   ![image.png](attachment:e0ec457e-f248-4145-86d9-28bafd2de0e9.png)\n",
-    "\n",
-    "\n",
-    "4) Le dernière case nous illustre que la distance est de 2. En effet, on peut voir qu'il faut deux(2) modifications pour que « love » devient « pova ». Il suffit de changer le « l » pour un « p » et changer le « e » pour un « a ».​\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 12,
-   "id": "2714c25d-5279-42ec-9af5-859d64d57c6b",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "La distance de Levenshtein est de: 2\n"
-     ]
-    }
-   ],
-   "source": [
-    "def levenshtein_distance(word1, word2):\n",
-    "    # Initialiser la matrice à 0. \n",
-    "    # 1)\n",
-    "    matrix = [[0] * (len(word2) + 1) for _ in range(len(word1) + 1)]\n",
-    "\n",
-    "\n",
-    "    # Remplir le premier colonne et la première rangé de la matix\n",
-    "    # 2)\n",
-    "    for i in range(len(word1) + 1):\n",
-    "        matrix[i][0] = i\n",
-    "    for j in range(len(word2) + 1):\n",
-    "        matrix[0][j] = j\n",
-    "\n",
-    "    # Calculer la distance de Levenshtein \n",
-    "    # 3)\n",
-    "    for i in range(1, len(word1) + 1):\n",
-    "        for j in range(1, len(word2) + 1):\n",
-    "            cost = 0 if word1[i - 1] == word2[j - 1] else 1\n",
-    "            matrix[i][j] = min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost)\n",
-    "\n",
-    "    # Retourner la distance (le chiffre dans le coin bas à gauche de la matrix)\n",
-    "    # 4)\n",
-    "    return matrix[len(word1)][len(word2)]\n",
-    "\n",
-    "print(\"La distance de Levenshtein est de: \" + str(levenshtein_distance(\"love\", \"pova\")))"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "id": "47f4a0a3-fb10-4bc3-bd7e-2830d2da88fd",
-   "metadata": {},
-   "source": [
-    "### (2) Similarité de Jaccard\n",
-    "\n",
-    "La similarité de Jaccard est une calculatrice qui peut être importer dans python et permet de calculer la similitude entre deux mots. Pour l'importer il suffit d'ajouter:\n",
-    "\n",
-    "*import textdistance*\n",
-    "\n",
-    "Cette calculatrice sépare les mots en ensembles. Dans cet exemple, les mots vont être séparés en ensemble de deux(2):\n",
-    "\n",
-    "*textdistance.Jaccard(qval=2).distance(mot,mot2)*\n",
-    "\n",
-    "Par exemple, pour le mot « apple », les couples « ap », « pp », « pl », « le » vont être créés.\n",
-    "\n",
-    "Ces ensembles vont être comparés aux ensembles du deuxième mot. Dans ce cas ci, on va prendre comme exemple « applo » avec les couples « ap », « pp », « pl » et « lo ». \n",
-    "\n",
-    "La formule mathématique est **Jaccard Similarity(A, B) = |A ∩ B| / |A ∪ B|**. En d'autres mots, la similarité de Jaccard est la quantité d'éléments de l'intersection des couples du premier mot et du deuxième mot divisé par le nombre d'éléments de l'union de tous les couples. De plus, toutes les similarités vont être comprisent entre 0 et 1: 0 indiquant aucune similarité et 1 indiquant les couples identiques.\n",
-    "\n",
-    "Pour notre exemple:\n",
-    "\n",
-    "    |A ∩ B| = 3 (« ap », « pp », « pl »)\n",
-    "    \n",
-    "    |A ∪ B| = 5 (« ap », « pp », « pl », « le », « lo »)\n",
-    "\n",
-    "Ce qui donne 0.6\n",
-    "\n",
-    "Cepandant, la fonction *textdistance.Jaccard(qval=2).distance(mot,mot2)* trouve la distance entre les deux mots et non la similitude, donc pour trouver la similitude il faut tout simplement faire **1-textdistance.Jaccard(qval=2).distance(mot,mot2)**"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 13,
-   "id": "4160cd7f-ceaa-4dae-967d-9d34db16691c",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "La similitude est de: [0.6]\n"
-     ]
-    }
-   ],
-   "source": [
-    "import textdistance\n",
-    "\n",
-    "sim = [1-(textdistance.Jaccard(qval=2).distance(\"apple\",\"applo\"))]\n",
-    "print(\"La similitude est de: \" + str(sim))"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "id": "40b8dc6a-555e-4465-88b1-9dd715facd86",
-   "metadata": {},
-   "source": [
-    "### (3) Algorithme de probabilité\n",
-    "\n",
-    "Pour commencer, il faut aller chercher des données pour que le programme puisse savoir quels sont les mots les plus utilisés. Les meilleures ressources sont les livres gratuits sur internet. À l'aide de ces ressources, nous pouvons étudier la fréquence d'utilisation des mots. Une grosse variété de livres digitals peuvent être trouvés partout sur internet. Pour ce projet, le classique littéraire « Moby dick » est choisi pour son riche vocabulaire varié. Le livre est sauvegardé dans un fichier texte (auto.txt). Le code ci-dessous va lire le fichier et compter la fréquence de chaque mot.\n",
-    "\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 14,
-   "id": "f0974a99-00e8-44a0-8c9d-81b75c8aa21f",
-   "metadata": {
-    "scrolled": true
-   },
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "[('the', 14703), ('of', 6742), ('and', 6517), ('a', 4799), ('to', 4707), ('in', 4238), ('that', 3081), ('it', 2534), ('his', 2530), ('i', 2120)]\n"
-     ]
-    }
-   ],
-   "source": [
-    "from collections import Counter\n",
-    "\n",
-    "import re\n",
-    "import os\n",
-    "mots = []\n",
-    "\n",
-    "current_dir = os.getcwd()\n",
-    "file_path = os.path.join(current_dir, 'auto.txt')\n",
-    "\n",
-    "#lire le fichier auto.txt\n",
-    "with open(file_path, 'r', encoding='utf-8') as f:\n",
-    "    file_name_data = f.read()\n",
-    "    file_name_data=file_name_data.lower()\n",
-    "    mots = re.findall('\\w+', file_name_data)\n",
-    "\n",
-    "# V pour vocabulaire\n",
-    "V = set(mots)\n",
-    "\n",
-    "#compter la fréquence de chaque mot\n",
-    "mot_freq = {}  \n",
-    "mot_freq = Counter(mots)\n",
-    "\n",
-    "#Afficher les 10 mots les plus utilisés\n",
-    "print(mot_freq.most_common()[0:10])"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "id": "7b46a5df-5e45-46fa-9529-1e2a5bd2f769",
-   "metadata": {},
-   "source": [
-    "Par la suite, il faut trouver la probabilité de fréquence de chaque mot. En d'autre mots, c'est la fréquence divisé par le nombre total de mot unique que nous avons. On veut savoir si un mot est utilisé souvent ou non."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 15,
-   "id": "50a21575-e906-4a49-a23b-aeed1e0351a5",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "[('the', 0.06603252448767868), ('project', 0.0004086893646452262), ('gutenberg', 0.0004221626404027611), ('ebook', 4.4910919191783095e-05), ('of', 0.030278941719100165), ('moby', 0.0004041982727260479), ('dick', 0.0004041982727260479), ('or', 0.003579400259585113), ('whale', 0.005524043060589321), ('by', 0.005488114325235894)]\n"
-     ]
-    }
-   ],
-   "source": [
-    "probs = {}  \n",
-    "\n",
-    "#total de mots\n",
-    "Total = sum(mot_freq.values())   \n",
-    "\n",
-    "# pour chaque mot on calcule sa fréquence divisé par le nombre total\n",
-    "for k in mot_freq.keys():\n",
-    "    probs[k] = mot_freq[k]/Total\n",
-    "\n",
-    "print(list(probs.items())[:10])"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "id": "4e74c43e-c8ae-416f-846b-92650ea118fd",
-   "metadata": {},
-   "source": [
-    "## Algorithme final\n",
-    "\n",
-    "Maintenant qu'on a trois(3) différentes méthodes pour analyser l'orthographe, il faut les unir tous ensemble pour créer l'algorithme ultime."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 16,
-   "id": "7d78e80c-fe86-4fdd-9187-e1cc08abae14",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Quel mot voulez-vous dire?\n",
-      "         Mot      Prob  Similarity  distance_Lenv\n",
-      "6595   apple  0.000018    0.600000              1\n",
-      "5173   apply  0.000013    0.600000              1\n",
-      "4366  mapple  0.000040    0.500000              2\n",
-      "5001   appal  0.000013    0.333333              2\n",
-      "4779  appals  0.000009    0.285714              2\n"
-     ]
-    }
-   ],
-   "source": [
-    "import pandas as pd\n",
-    "import numpy as np\n",
-    "\n",
-    "def my_autocorrect(mot):\n",
-    "    mot = mot.lower()\n",
-    "    if mot in V:\n",
-    "            return('Le mot est semble être correct')\n",
-    "    else:\n",
-    "\n",
-    "        #Probabilité\n",
-    "        df = pd.DataFrame.from_dict(probs, orient='index').reset_index()\n",
-    "        df = df.rename(columns={'index':'Mot', 0:'Prob'})\n",
-    "        \n",
-    "        #similarité de Jaccard\n",
-    "        sim = [1-(textdistance.Jaccard(qval=2).distance(v,mot)) for v in mot_freq.keys()]\n",
-    "        df['Similarity'] = sim \n",
-    "\n",
-    "        #distance de Levenshtein\n",
-    "        distance = [levenshtein_distance(mot, v) for v in mot_freq.keys()] \n",
-    "        df['distance_Lenv'] = distance \n",
-    "        \n",
-    "        #Trier les mots par distance, similarité et probabilité\n",
-    "        output = df.sort_values(by=['distance_Lenv','Similarity', 'Prob'], ascending=[True, False, False]).head()\n",
-    "        \n",
-    "        print('Quel mot voulez-vous dire?')\n",
-    "        return(output)\n",
-    "\n",
-    "print(my_autocorrect(\"applo\"))"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "id": "b9bd212d-97ec-4306-9a41-9f9c5628d1cc",
-   "metadata": {},
-   "source": [
-    "# À continuer\n",
-    "\n",
-    "Comme vous aviez peut-être remarqué, cet algorithme n'est pas parfait. Si on écrit un mot qui n'est pas dans le fichier « auto.txt », le programme ne va jamais le reconnaitre. C'est pour cela qu'il faut implémenter du « machine learning » pour que le programme puisse apprendre des nouveaux mots. De plus, cela permettrait au programme d'analyser les habitudes de l'utilisateur ce qui permettra d'offrir des choix de correction plus précis."
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python 3 (ipykernel)",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.10.11"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+# Introduction au projet d'autocorrecteur
+
+Le but de ce projet est simple. Nous allons créer un autocorrecteur qui va corriger les **fautes d'ortographe**, les **fautes de pluralités** et les **fautes de conjugaison** pour des textes en anglais. Le programme va avoir un système de rétroaction où l'utilisateur va pouvoir informer l'AI à propos des corrections proposés afin de savoir si elles sont bonnes ou mauvaises. De plus, si un mot n'est pas dans le dictionnaire, mais qu'il est réutiliser à plusieurs reprises, le programme doit être en mesure de s'adapter et d'accepter ce mot. Ainsi, le programme apprendra les habitudes grammaticales de l'utilisateur et de s'adapter à son écriture.
+
+## Faute d'ortographe
+
+Pour commencer, je vais me charger de trouver un algorithme qui va me permettre de trouver un ortographe erroné et de suggérer des corrections possibles. Je vais utiliser **(1) l'algorithme de distance de Levenshtein**, **(2) la similarité de Jaccard** et un **(3) algorithme de probabilité**.
+
+### (1) L'algorithme de distance de Levenshtein
+
+Pour cet algorithme, l'idée est de trouver le plus petit nombre de modification qu'il faut faire afin que le premier mot soi équivalant au deuxième mot. 
+
+Il y a trois(3) modifications possibles:
+
+1. Remplacer
+2. Ajouter
+3. Supprimer
+
+Exemple 1 : Textse => Texte, c’est une modification (suppression de «s»)​
+
+
+Exemple 2 : Gumbo => Gambol, c’est deux modifications («u» pour «a» et ajout de «l»)
+
+
+Exemple 3 : Mamger => Manger, c’est une modification (remplace «m» par «n»)
+
+Pour expliquer le code ci-dessous, je vais utiliser les mots « love » et « pova » comme exemple.
+
+1) À la premier étape, il faut créer une matrice et l'initialiser à 0. Le mot « love » contient 4 lettres et « pova » contient 4 lettres donc nous aurons une matrice de 5x5 (la première case restera 0).
+   
+    ![image.png](attachment:30bb071a-f817-430f-a7d7-c1ae930d2ef7.png)
+   
+
+2) Maintenant, il faut remplir la première colonne et la première rangée avec des chiffres partant de 0 jusqu'à la taille complète du mot. (Les lettres ne font pas partie de la matrice. Ils sont présents seulement pour l'explication.)
+
+    ![image.png](attachment:b32679c2-5958-4ad8-a414-8fbe45554772.png)
+
+3) Ici, nous allons commencer à comparer les lettres. Voici les étapes:
+     1. Si Mot[i] == Mot2[j], alors le coût est de 0
+     2. Si Mot[i] != Mot2[j], alors le coût est de 1
+  
+     3. Entre les trois choix suivants, il faut trouver le plus petit nombre:
+        - Matrix[i, j-1] + 1
+        - Matrix[i-1, j] + 1
+        - Matrix[i-1, j-1] + coût
+
+        Ce nombre va être entreposé dans Matrix[i, j]
+     
+   
+   Pour la première colonne, on va comparer les lettres du mots « LOVE » à la première lettre du mot « POVA ». Voici le résultat :
+
+   ![image.png](attachment:079030c2-4f9f-4fca-a912-215733ca8992.png)
+
+   En premier lieu, on a « L » comparé à « P ». Ces deux lettres sont différents donc le coût == 1.
+   - Matrix[i, j-1] + 1 = 2
+   - Matrix[i-1, j] + 1 = 2
+   - Matrix[i-1, j-1] + coût = 1
+
+  
+   D'où Matrix[1, 1] = 1
+
+
+   En deuxième lieu, on a « O » comparé à « P ». Le coût est 1.
+   - Matrix[i, j-1] + 1 = 2
+   - Matrix[i-1, j] + 1 = 3
+   - Matrix[i-1, j-1] + coût = 1
+
+  
+   D'où Matrix[1, 2] = 2
+
+   Il suffit de refaire les mêmes étapes jusqu'à la fin.
+
+   ![image.png](attachment:e0ec457e-f248-4145-86d9-28bafd2de0e9.png)
+
+
+4) Le dernière case nous illustre que la distance est de 2. En effet, on peut voir qu'il faut deux(2) modifications pour que « love » devient « pova ». Il suffit de changer le « l » pour un « p » et changer le « e » pour un « a ».​
