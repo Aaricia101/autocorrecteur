@@ -23,42 +23,72 @@ def levenshtein_distance(word1, word2):
     # Return the Levenshtein distance
     return matrix[len(word1)][len(word2)]
 
-
-
-
 mots = []
 with open('auto.txt', 'r', encoding='utf-8') as f:
     file_name_data = f.read()
     file_name_data=file_name_data.lower()
     mots = re.findall('\w+', file_name_data)
 
+#lire les nouveau mots
+with open('newWords.txt', 'r', encoding='utf-8') as f:
+    file_name_data = f.read()
+    file_name_data=file_name_data.lower()
+    mots += re.findall('\w+', file_name_data)
+
 V = set(mots)
 
 mot_freq = {}  
 mot_freq = Counter(mots)
-#print(mot_freq.most_common()[0:10])
 
+
+#algo de probabilité
 probs = {}     
 Total = sum(mot_freq.values())    
 for k in mot_freq.keys():
     probs[k] = mot_freq[k]/Total
 
+motCorrect = True
 
-def my_autocorrect(mot):
+def my_autocorrect(mot, index):
     mot = mot.lower()
     if mot in V:
-            return('Your word seems to be correct')
+            return('Le mot est bon')
     else:
-        
+        global motCorrect
+        motCorrect = False
+
         sim = [1-(textdistance.Jaccard(qval=2).distance(v,mot)) for v in mot_freq.keys()]
         df = pd.DataFrame.from_dict(probs, orient='index').reset_index()
         df = df.rename(columns={'index':'Word', 0:'Prob'})
         df['Similarity'] = sim
         distance = [levenshtein_distance(mot, v) for v in mot_freq.keys()] 
         df['distance_Lenv'] = distance 
-        output = df.sort_values(by=['distance_Lenv','Similarity', 'Prob'], ascending=[True, False, False]).head()
-        mots_possible = output['Word'].tolist()[:5]
+      
+        output = df.sort_values(by=['distance_Lenv','Similarity', 'Prob'], ascending=[True, False, False])[index*5:index*5+5]
+
+        mots_possible = output['Word'].tolist()
+        
         print('Quel mot vous voulez dire?' + str(list(mots_possible)))
         return(output)
 
-print(my_autocorrect(input("Écrivez votre mot: ")))
+index = 0
+mot = input("Écrivez votre mot: ")
+print(my_autocorrect(mot, index))
+
+if motCorrect == False:
+    reponse = input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé)")
+
+# voir les 5 prochains mots
+    while(reponse =='0'):
+        index +=1
+        print(my_autocorrect(mot, index))  
+        reponse = input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé)")
+
+    #apprendre un nouveau mot
+    if reponse == '-1' :
+        with open('newWords.txt', 'a') as file:
+            file.write(mot + '\n')
+
+
+    
+
