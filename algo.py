@@ -1,3 +1,7 @@
+#Problème 1: L'application est en français mais le texte est corrigé en anglais
+#Problème 2: Entrez quoi si le mot est présent
+#Problème 3: Comment gèrer si l'utilisateur écrit un déterminant et un nom ou plusieurs mots différents (Exemple: the rat)
+
 import pandas as pd
 import numpy as np
 import textdistance
@@ -76,13 +80,13 @@ mot = input("Écrivez votre mot: ")
 print(my_autocorrect(mot, index))
 
 if motCorrect == False:
-    reponse = input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé)")
+    reponse = input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé):")
 
 # voir les 5 prochains mots
     while(reponse =='0'):
         index +=1
         print(my_autocorrect(mot, index))  
-        reponse = input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé)")
+        reponse = input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé):")
 
     #apprendre un nouveau mot
     if reponse == '-1' :
