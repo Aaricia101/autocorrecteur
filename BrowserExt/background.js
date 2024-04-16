@@ -9,8 +9,6 @@ browser.menus.create({
 
 browser.menus.onClicked.addListener(async function(info, tab) {
     if(info.menuItemId == "autocorrectext") {
-        let textToCorrect = info.selectionText;
-        browser.storage.local.set({"text": info.selectionText})
         browser.storage.local.set({"results": "pending"})
 
         var xhr = new XMLHttpRequest();
@@ -24,7 +22,7 @@ browser.menus.onClicked.addListener(async function(info, tab) {
         xhr.setRequestHeader('Content-Type', 'application/json')
         console.log("Called with success");
         xhr.send(JSON.stringify({
-            textToCorrect: textToCorrect
+            textToCorrect: info.selectionText
         }))
     }
 });
