@@ -82,14 +82,16 @@ def my_autocorrect(mot, index):
         return(output)
 
 index = 0
-mots = str(sys.argv[1]).split()
-resultats = []
+textToCorrect = str(sys.argv[1])
+mots = re.findall('\w+', textToCorrect)
 for mot in mots:
+
+    print(":" + mot)
     print(my_autocorrect(mot, index))
     print("------------------------")
 
     if motCorrect == False:
-        reponse = 0#input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé):")
+        reponse = 0 #input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé):")
 
 # voir les 5 prochains mots
         while(reponse =='0'):

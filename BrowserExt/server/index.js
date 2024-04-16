@@ -19,7 +19,7 @@ app.post('/autocorrectext', (req, res) => {
         let wordData = [];
         for(let i = 0; i < dataArr.length; i++) {
             if(dataArr[i][0] !== 'L' && dataArr[i][0] !== " " && dataArr[i][0] !== "-") {
-                wordData.push(dataArr[i].replaceAll(/( ){1,}/g,' ').replace('\r', ''));
+                wordData.push(dataArr[i].replaceAll(/( ){1,}/g,' ').replace('\r', '').replace(':', ''));
             }
             if(dataArr[i][0] === "-") {
                 ufData.push(wordData);
