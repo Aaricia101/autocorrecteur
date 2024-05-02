@@ -31,13 +31,13 @@ mots = []
 with open('auto.txt', 'r', encoding='utf-8') as f:
     file_name_data = f.read()
     file_name_data=file_name_data.lower()
-    mots = re.findall('\w+', file_name_data)
+    mots = re.findall(r"[\w']+", file_name_data)
 
 #lire les nouveau mots
 with open('newWords.txt', 'r', encoding='utf-8') as f:
     file_name_data = f.read()
     file_name_data=file_name_data.lower()
-    mots += re.findall('\w+', file_name_data)
+    mots += re.findall(r"[\w']+", file_name_data)
 
 V = set(mots)
 
