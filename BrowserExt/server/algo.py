@@ -10,6 +10,10 @@ from collections import Counter
 import sys
 import os
 import pathlib
+import nltk
+
+import inflect
+engine = inflect.engine()
 
 pathdir = pathlib.Path(__file__).parent.resolve()
 os.chdir(pathdir)
@@ -61,25 +65,42 @@ global motCorrect
 motCorrect = True
 
 def my_autocorrect(mot, index):
-    mot = mot.lower()
-    if mot in V:
-            return('Le mot est bon')
+    if (len(mot.split()) > 1):
+        #Correction d'une phrase
+        sentence = mot.strip('\n').replace('\n', ' ')
+        tokens = nltk.word_tokenize(sentence)
+        pos_tags = nltk.pos_tag(tokens)
+
+        correction = []
+        for token, pos in pos_tags:
+            if pos == 'NN' and token != 'more':
+                plural_token = engine.plural(token)
+            else:
+                plural_token = token
+            correction.append(plural_token)
+        print(f"Pluralized: {' '.join(correction)}")
     else:
-        motCorrect = False
+        #Correction d'un mot
+        mot = mot.lower()
+        if mot in V:
+                return('Le mot est bon')
+        else:
+            global motCorrect
+            motCorrect = False
 
-        sim = [1-(textdistance.Jaccard(qval=2).distance(v,mot)) for v in mot_freq.keys()]
-        df = pd.DataFrame.from_dict(probs, orient='index').reset_index()
-        df = df.rename(columns={'index':'Word', 0:'Prob'})
-        df['Similarity'] = sim
-        distance = [levenshtein_distance(mot, v) for v in mot_freq.keys()] 
-        df['distance_Lenv'] = distance 
-      
-        output = df.sort_values(by=['distance_Lenv','Similarity', 'Prob'], ascending=[True, False, False])[index*5:index*5+5]
-
-        mots_possible = output['Word'].tolist()
+            sim = [1-(textdistance.Jaccard(qval=2).distance(v,mot)) for v in mot_freq.keys()]
+            df = pd.DataFrame.from_dict(probs, orient='index').reset_index()
+            df = df.rename(columns={'index':'Word', 0:'Prob'})
+            df['Similarity'] = sim
+            distance = [levenshtein_distance(mot, v) for v in mot_freq.keys()] 
+            df['distance_Lenv'] = distance 
         
-        #print('Quel mot vous voulez dire?' + str(list(mots_possible)))
-        return(output)
+            output = df.sort_values(by=['distance_Lenv','Similarity', 'Prob'], ascending=[True, False, False])[index*5:index*5+5]
+
+            mots_possible = output['Word'].tolist()
+            
+            print('Quel mot vous voulez dire?' + str(list(mots_possible)))
+            return(output)
 
 index = 0
 textToCorrect = str(sys.argv[1])

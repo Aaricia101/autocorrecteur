@@ -4,34 +4,29 @@ from nltk.corpus import words
 from nltk.tokenize import word_tokenize
 from nltk.tag import pos_tag
 import re
-
-
-#Va chercher les données du dataset
-list = words.words()
-#print(list[:10])
-#random.shuffle(list)
-
-
 import inflect
 engine = inflect.engine()
 
-
-for w in list[:10]:
-    w1 = word_tokenize(w)
-    tagged_words = pos_tag(w1)
-    #print(tagged_words)
+is_noun = lambda pos: pos[:2] == 'NN'
 
 mots = []
-with open('auto2.txt', 'r', encoding='utf-8') as f:
+with open('auto.txt', 'r', encoding='utf-8') as f:
     for i in range(22323):
         next(f)
-    file_name_data = f.read().strip('\n').replace('\n', ' ').split('.')
-    for x in file_name_data:
-         for w in x.split(" "):
-                    for word, pos in pos_tag(word_tokenize(w)):
-                         if pos == 'VBZ':
-                              print(word)
-          
+    s = f.read().strip('\n').replace('\n', ' ').split('.')
+    sentence = ''.join(s)
+    tokens = nltk.word_tokenize(sentence)
+    pos_tags = nltk.pos_tag(tokens)
+
+    correction = []
+    for token, pos in pos_tags:
+        if pos == 'NN' and token != 'more':
+            plural_token = engine.plural(token)
+        else:
+            plural_token = token
+        correction.append(plural_token)
     
+          
+print(f"Pluralized: {' '.join(correction)}")
 
 #print(mots[:25])
