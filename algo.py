@@ -8,7 +8,6 @@ import textdistance
 import re
 from collections import Counter
 import nltk
-
 import inflect
 engine = inflect.engine()
 
@@ -101,6 +100,10 @@ print(my_autocorrect(mot, index))
 
 if motCorrect == False:
     reponse = input("Entrez un nombre correspondant (0 si le mot n'est pas présent et -1 si le mot est personnalisé):")
+
+    if reponse != '-1' and reponse != '0':
+        with open('newWords.txt', 'a') as file:
+            file.write(mot + '\n')
 
 # voir les 5 prochains mots
     while(reponse =='0'):
