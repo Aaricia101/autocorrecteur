@@ -1,7 +1,5 @@
 
-luv
-lol
-
+enable
 speedcubers
 CFOP
 method
@@ -11,9 +9,5 @@ Mastering
 speedsolving
 requires
 beginner's
-mastered
-enable
-speedsolve
-Rubik's
-cube
-solving
+met
+CFOP

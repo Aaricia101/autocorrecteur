@@ -41,7 +41,7 @@ app.post('/ajoutmot', (req, res) => {
     console.log("----------------------------")
     var nouvMot = req.body.ajoutMot.toString().replace('\n', '').replaceAll('’', '\'');
 
-    fs.appendFile("newWords.txt", "\n" + nouvMot, function(err, result) {
+    fs.appendFile("./server/newWords.txt", "\n" + nouvMot, function(err, result) {
         //if(err) { console.log('error', err); }
       }
     );
