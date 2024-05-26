@@ -10,11 +10,13 @@ browser.menus.create({
 browser.menus.onClicked.addListener(async function(info, tab) {
     if(info.menuItemId == "autocorrectext") {
         browser.storage.local.set({"results": "pending"})
+        browser.storage.local.set({"corrections": []})
 
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = (rep) => {
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                 browser.storage.local.set({"results": xhr.response})
+                console.log(xhr.response);
             }
         };
 
@@ -26,4 +28,5 @@ browser.menus.onClicked.addListener(async function(info, tab) {
         }))
     }
 });
+
 
