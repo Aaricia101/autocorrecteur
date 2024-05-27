@@ -15,6 +15,7 @@ app.post('/autocorrectext', (req, res) => {
 
     python_process.stdout.on('data', (data) => {
         let dataArr = data.toString().split('\n');
+        console.log("----------------------------")
         console.log("data recieved from python: " + data.toString())
         let ufData = [];
         let wordData = [];
@@ -37,7 +38,7 @@ app.post('/autocorrectext', (req, res) => {
 
 app.post('/ajoutmot', (req, res) => {
     console.log("----------------------------")
-    console.log("- " + req.body.ajoutMot + " -")
+    console.log("- Mot Ajouté: " + req.body.ajoutMot + " -")
     console.log("----------------------------")
     var nouvMot = req.body.ajoutMot.toString().replace('\n', '').replaceAll('’', '\'');
 
