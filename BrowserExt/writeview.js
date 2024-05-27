@@ -28,7 +28,7 @@ function rewritePopup() {
     browser.storage.local.get(["results"]).then(res => {
         paragraphNode.innerHTML = "";
         if(res.results == "pending") {
-            paragraphNode.innerHTML = "Le texte est en train d'être corrigé, fermé le popup et réesseyez dans quelques secondes..."
+            paragraphNode.innerHTML = "Le texte est en train d'être corrigé, fermé le popup et réessayez dans quelques secondes..."
             listNode.innerHTML = "";
         }
         else {
