@@ -18,7 +18,7 @@ function addMot(motOriginal, correction) {
 function ignoreMot(motOriginal) {
     motsCorriges.push(motOriginal + ":'");
     browser.storage.local.set({"corrections": motsCorriges})
-    console.log("i hate myself");
+    console.log("- Mot Ignoré: " + motOriginal + " -")
     rewritePopup();
 }
 
@@ -115,7 +115,7 @@ function rewritePopup() {
                         }
     
                         if(candInd == -1) {
-                            console.log(arrData[i]);
+                            console.log("Erreur, aucun candidat trouvé: " + arrData[i]);
                         }
                         let cD = arrData[i][candInd]
                         candOrder.push(cD[1])
@@ -163,6 +163,7 @@ browser.storage.local.get(["corrections"]).then(res => {
     else {
         motsCorriges = [];
     }
+    console.log("corrections obtenues du stockage: " + motsCorriges.toString())
     rewritePopup();
 })
 //document.body.append()

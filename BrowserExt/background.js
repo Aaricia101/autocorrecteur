@@ -16,13 +16,13 @@ browser.menus.onClicked.addListener(async function(info, tab) {
         xhr.onreadystatechange = (rep) => {
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                 browser.storage.local.set({"results": xhr.response})
-                console.log(xhr.response);
+                console.log("résultats: " + xhr.response);
             }
         };
+        console.log("envoyé: " + info.selectionText);
 
         xhr.open('POST', 'http://localhost:8080/autocorrectext', true)
         xhr.setRequestHeader('Content-Type', 'application/json')
-        console.log("Called with success");
         xhr.send(JSON.stringify({
             textToCorrect: info.selectionText
         }))
